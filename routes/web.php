@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('projects', ['as' => 'projects.get', 'uses' => 'ProjectsController@getIndex']);
+
+Route::post('projects', ['as' => 'projects.save', 'uses' => 'ProjectsController@postSave']);

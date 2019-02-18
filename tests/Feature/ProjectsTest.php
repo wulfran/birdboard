@@ -49,16 +49,16 @@ class ProjectsTest extends TestCase
 
     /** @test */
 
-    public function a_user_can_view_a_project()
-    {
-        $this->withoutExceptionHandling();
-
-        $project = factory('App\Models\Project')->create();
-
-        $this->get('/projects/' . $project)
-            ->assertSee($project->title)
-            ->assertSee($project->description);
-
-    }
+//    public function a_user_can_view_a_project()
+//    {
+//        $this->withoutExceptionHandling();
+//
+//        $project = factory('App\Models\Project')->create();
+//
+//        $this->get('/projects/' . $project)
+//            ->assertSee($project->title)
+//            ->assertSee($project->description);
+//
+//    }
 
 }
