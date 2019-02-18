@@ -18,9 +18,7 @@ class ProjectsTest extends TestCase
     {
         $this->actingAs(factory(User::class)->create());
 
-        $attributes = factory(Project::class)->raw();
-
-        $attributes['user_id'] = auth()->id();
+        $attributes = factory(Project::class)->raw(['user_id' => auth()->id()]);
 
         $this->post('/projects', $attributes)->assertRedirect();
 
@@ -52,11 +50,13 @@ class ProjectsTest extends TestCase
     }
 
     /** @test */
-    public function user_can_view_a_project()
+    public function user_can_view_their_project()
     {
-        $this->withoutExceptionHandling();
+        $this->be(factory(User::class)->create());
 
-        $project= factory('App\Models\Project')->create();
+//        $this->withoutExceptionHandling();
+
+        $project= factory('App\Models\Project')->create(['user_id' => auth()->id()]);
 
         $this->get($project->getUrl())
             ->assertStatus(200)
@@ -67,10 +67,36 @@ class ProjectsTest extends TestCase
     }
 
     /** @test */
+    public function user_can_view_only_his_own_projects()
+    {
+        $this->be(factory(User::class)->create());
+
+//        $this->withoutExceptionHandling();
+
+        $project= factory('App\Models\Project')->create();
+
+        $this->get($project->getUrl())->assertStatus(403);
+    }
+
+    /** @test */
     public function a_project_requires_an_owner()
     {
         $attributes = factory(Project::class)->raw(['user_id' => NULL]);
 
         $this->post('/projects', $attributes)->assertRedirect('login');
+    }
+
+    /** @test */
+    public function guests_may_not_view_projects()
+    {
+        $this->get(route('projects.list'))->assertRedirect('login');
+    }
+
+    /** @test */
+    public function guests_cannot_view_a_single_project()
+    {
+        $project = factory(Project::class)->create();
+
+        $this->get(route('projects.show', ['project' => $project->id]))->assertRedirect('login');
     }
 }

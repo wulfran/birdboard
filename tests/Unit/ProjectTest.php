@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use App\Models\Project;
+use App\User;
 use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -18,6 +20,13 @@ class ProjectTest extends TestCase
         $project = factory('App\Models\Project')->create();
 
         $this->assertSame(URL::to('/') .'/projects/' . $project->id, $project->getUrl());
+    }
 
+    /** @test */
+    public function project_belongs_to_an_user()
+    {
+        $project = factory(Project::class)->create();
+
+        $this->assertInstanceOf(User::class, $project->user);
     }
 }

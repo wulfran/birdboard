@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 
 class ProjectsController extends Controller
 {
-    public function getIndex(){
-        $projects = Project::all();
+    public function getIndex()
+    {
+        $projects = auth()->user()->projects;
 
         return view('projects.list', compact([
             'projects'
@@ -23,17 +24,18 @@ class ProjectsController extends Controller
         ]);
 
         auth()->user()->projects()->create($data);
-//        $data['user_id'] = auth()->id();
-
-//        Project::create($data);
 
         return redirect()->back();
     }
 
-    public function getShow(Project $project){
-        if(is_null($project->id)){
-            $project = Project::FindOrFail(request('project'));
+    public function getShow(Project $project)
+    {
+        if(auth()->user()->isNot($project->user)){
+            abort(403);
         }
+//        if(auth()->id() != $project->user_id) {
+//            abort(403);
+//        }
         return view('projects.show', compact(['project']));
     }
 }
