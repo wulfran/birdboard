@@ -48,17 +48,16 @@ class ProjectsTest extends TestCase
     }
 
     /** @test */
+    public function user_can_view_a_project(){
+        $this->withoutExceptionHandling();
 
-//    public function a_user_can_view_a_project()
-//    {
-//        $this->withoutExceptionHandling();
-//
-//        $project = factory('App\Models\Project')->create();
-//
-//        $this->get('/projects/' . $project)
-//            ->assertSee($project->title)
-//            ->assertSee($project->description);
-//
-//    }
+        $project= factory('App\Models\Project')->create();
 
+        $this->get($project->getUrl())
+            ->assertStatus(200)
+            ->assertSee('Birdboard')
+            ->assertSee($project->title)
+            ->assertSee($project->description)
+        ;
+    }
 }

@@ -24,14 +24,10 @@ class ProjectsController extends Controller
         return redirect()->back();
     }
 
-    public function getShow(Project $project)
-    {
-        return view('projects.show', compact([
-            'project'
-        ]));
-    }
-
-    public function test(Project $project){
-        dd($project);
+    public function getShow(Project $project){
+        if(is_null($project->id)){
+            $project = Project::FindOrFail(request('project'));
+        }
+        return view('projects.show', compact(['project']));
     }
 }
