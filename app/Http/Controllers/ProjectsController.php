@@ -17,9 +17,15 @@ class ProjectsController extends Controller
 
     public function postSave()
     {
-        $data = request()->validate(['title' => 'required', 'description' => 'required']);
+        $data = request()->validate([
+            'title' => 'required',
+            'description' => 'required',
+        ]);
 
-        Project::create($data);
+        auth()->user()->projects()->create($data);
+//        $data['user_id'] = auth()->id();
+
+//        Project::create($data);
 
         return redirect()->back();
     }

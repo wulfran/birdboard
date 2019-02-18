@@ -14,8 +14,11 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('projects', ['as' => 'projects.get', 'uses' => 'ProjectsController@getIndex']);
 Route::get('/projects/{project}', [ 'as' => 'projects.show', 'uses' => 'ProjectsController@getShow']);
 
-Route::post('projects', ['as' => 'projects.save', 'uses' => 'ProjectsController@postSave']);
+Route::post('projects', ['as' => 'projects.create', 'uses' => 'ProjectsController@postSave', 'middleware' => 'auth']);

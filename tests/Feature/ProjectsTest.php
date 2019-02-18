@@ -2,25 +2,25 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
+use App\Models\Project;
+use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ProjectsTest extends TestCase
 {
-    use WithFaker, RefreshDatabase, WithoutMiddleware;
+    use WithFaker, RefreshDatabase;
 
     /** @test */
 
     public function user_can_create_project()
     {
-        $this->withoutExceptionHandling();
+        $this->actingAs(factory(User::class)->create());
 
-        $attributes = [
-            'title' => $this->faker->sentence,
-            'description' => $this->faker->paragraph
-        ];
+        $attributes = factory(Project::class)->raw();
+
+        $attributes['user_id'] = auth()->id();
 
         $this->post('/projects', $attributes)->assertRedirect();
 
@@ -33,6 +33,8 @@ class ProjectsTest extends TestCase
 
     public function a_project_requires_a_title()
     {
+        $this->actingAs(factory(User::class)->create());
+
         $attributes = factory('App\Models\Project')->make(['title' => ''])->toArray();
 
         $this->post('/projects', $attributes)->assertSessionHasErrors('title');
@@ -42,13 +44,16 @@ class ProjectsTest extends TestCase
 
     public function a_project_requires_a_description()
     {
+        $this->actingAs(factory(User::class)->create());
+
         $attributes = factory('App\Models\Project')->make(['description' => ''])->toArray();
 
         $this->post('/projects', $attributes)->assertSessionHasErrors('description');
     }
 
     /** @test */
-    public function user_can_view_a_project(){
+    public function user_can_view_a_project()
+    {
         $this->withoutExceptionHandling();
 
         $project= factory('App\Models\Project')->create();
@@ -59,5 +64,13 @@ class ProjectsTest extends TestCase
             ->assertSee($project->title)
             ->assertSee($project->description)
         ;
+    }
+
+    /** @test */
+    public function a_project_requires_an_owner()
+    {
+        $attributes = factory(Project::class)->raw(['user_id' => NULL]);
+
+        $this->post('/projects', $attributes)->assertRedirect('login');
     }
 }
