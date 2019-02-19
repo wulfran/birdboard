@@ -20,6 +20,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'], function (){
     Route::get('projects', ['as' => 'projects.list', 'uses' => 'ProjectsController@getIndex']);
-    Route::post('projects', ['as' => 'projects.create', 'uses' => 'ProjectsController@postSave']);
+    Route::get('projects/create', ['as' => 'projects.create', 'uses' => 'ProjectsController@getAdd']);
+    Route::post('projects', ['as' => 'projects.save', 'uses' => 'ProjectsController@postSave']);
     Route::get('/projects/{project}', [ 'as' => 'projects.show', 'uses' => 'ProjectsController@getShow']);
 });

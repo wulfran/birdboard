@@ -16,6 +16,11 @@ class ProjectsController extends Controller
         ]));
     }
 
+    public function getAdd()
+    {
+        return view('projects.create');
+    }
+
     public function postSave()
     {
         $data = request()->validate([
@@ -25,7 +30,7 @@ class ProjectsController extends Controller
 
         auth()->user()->projects()->create($data);
 
-        return redirect()->back();
+        return redirect(route('projects.list'));
     }
 
     public function getShow(Project $project)
@@ -33,9 +38,7 @@ class ProjectsController extends Controller
         if(auth()->user()->isNot($project->user)){
             abort(403);
         }
-//        if(auth()->id() != $project->user_id) {
-//            abort(403);
-//        }
+
         return view('projects.show', compact(['project']));
     }
 }
