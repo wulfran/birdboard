@@ -1,12 +1,19 @@
-<html>
-<head>
-    <title>BirdBoard</title>
-</head>
-<body>
-    <h1>Birdboard - {{ $project->title }}</h1>
+@extends('layouts.app')
 
-    <div class="content">
-        {!! $project->description !!}
+@section('content')
+    <div class="row">
+        <div class="col-md-12">
+            <h1>{{ $project->title }}</h1>
+        </div>
     </div>
-</body>
-</html>
+    <div class="row">
+        <div class="col-md-12">
+                {!! $project->description !!}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <a href="{{ route('projects.list') }}" class="btn btn-primary btn-md">Back</a>
+        </div>
+    </div>
+@endsection

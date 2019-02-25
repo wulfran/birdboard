@@ -64,7 +64,6 @@ class ManageProjectsTest extends TestCase
 
         $this->get($project->getUrl())
             ->assertStatus(200)
-            ->assertSee('Birdboard')
             ->assertSee($project->title)
             ->assertSee($project->description)
         ;
