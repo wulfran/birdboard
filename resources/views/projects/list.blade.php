@@ -2,27 +2,21 @@
 
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="flex items-center mb-2">
-                <a href="{{ route('projects.create') }}">Create</a>
-            </div>
-        </div>
+    <div class="flex items-center mb-3">
+        <a href="{{ route('projects.create') }}">New Project</a>
     </div>
-    <div class="row">
-        <div class="col-md-12">
 
-            <ul>
-                @forelse($projects as $project)
-                    <li>
-                        <a href="{{ $project->getUrl() }}">
-                            {{ $project->title }}
-                        </a>
-                    </li>
-                @empty
-                    <li>No projects yet</li>
-                @endforelse
-            </ul>
-        </div>
+    <div class="flex">
+        @forelse($projects as $project)
+            <div class="bg-white mr-4 p-5 rounded shadow w-1/3" style="height: 200px;">
+                <h3 class="font-normal text-xl py-5">{{ $project->title }}</h3>
+
+                <div class="text-grey">{{ str_limit($project->description, 100) }}</div>
+            </div>
+        @empty
+            <div>
+                No projects yet.
+            </div>
+        @endforelse
     </div>
 @endsection
