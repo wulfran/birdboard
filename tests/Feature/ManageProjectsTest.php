@@ -35,7 +35,7 @@ class ManageProjectsTest extends TestCase
 
     public function a_project_requires_a_title()
     {
-        $this->actingAs(factory(User::class)->create());
+        $this->signIn();
 
         $attributes = factory('App\Models\Project')->make(['title' => ''])->toArray();
 
@@ -46,7 +46,7 @@ class ManageProjectsTest extends TestCase
 
     public function a_project_requires_a_description()
     {
-        $this->actingAs(factory(User::class)->create());
+        $this->signIn();
 
         $attributes = factory('App\Models\Project')->make(['description' => ''])->toArray();
 
@@ -56,7 +56,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function user_can_view_their_project()
     {
-        $this->be(factory(User::class)->create());
+        $this->signIn();
 
 //        $this->withoutExceptionHandling();
 
@@ -65,14 +65,14 @@ class ManageProjectsTest extends TestCase
         $this->get($project->getUrl())
             ->assertStatus(200)
             ->assertSee($project->title)
-            ->assertSee($project->description)
+            ->assertSee(str_limit($project->description, 100))
         ;
     }
 
     /** @test */
     public function user_can_view_only_his_own_projects()
     {
-        $this->be(factory(User::class)->create());
+        $this->signIn();
 
 //        $this->withoutExceptionHandling();
 
