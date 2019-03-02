@@ -28,9 +28,9 @@ class ProjectsController extends Controller
             'description' => 'required',
         ]);
 
-        auth()->user()->projects()->create($data);
+        $project = auth()->user()->projects()->create($data);
 
-        return redirect(route('projects.list'));
+        return redirect(route('projects.show', ['project' => $project]));
     }
 
     public function getShow(Project $project)

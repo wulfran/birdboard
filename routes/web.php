@@ -23,5 +23,6 @@ Route::group(['middleware' => 'auth'], function (){
     Route::get('projects/create', ['as' => 'projects.create', 'uses' => 'ProjectsController@getAdd']);
     Route::post('projects', ['as' => 'projects.save', 'uses' => 'ProjectsController@postSave']);
     Route::get('/projects/{project}', [ 'as' => 'projects.show', 'uses' => 'ProjectsController@getShow']);
-    Route::post('/projects/{project}/add-task', ['as' => 'projects.tasks.add', 'uses' => 'ProjectTasksController@postSave']);
+    Route::post('/projects/{project}/tasks/add', ['as' => 'projects.tasks.add', 'uses' => 'ProjectTasksController@postSave']);
+    Route::patch('/projects/{project}/tasks/{task}', ['as' => 'projects.tasks.patch', 'uses' => 'ProjectTasksController@postUpdate']);
 });

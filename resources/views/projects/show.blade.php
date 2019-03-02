@@ -15,11 +15,24 @@
             <div class="lg:w-3/4 px-3 mb-8">
                 <div class="mb-6">
                     <h2 class="text-lg text-grey font-normal mb-3">Tasks</h2>
-                    @forelse($project->tasks as $task)
-                        <div class="card mb-3">{{ $task->body }}</div>
-                    @empty
-                        <div class="card mb-3">No tasks yet</div>
-                    @endforelse
+                    @foreach($project->tasks as $task)
+                        <div class="card mb-3">
+                            <form action="{{ route('projects.tasks.patch', ['project' => $project, 'task' => $task]) }}" method="POST">
+                                @method('PATCH')
+                                {{ csrf_field() }}
+                                <div class="flex">
+                                    <input type="text" name="body" value="{{ $task->body }}" class="w-full {{ $task->completed? 'text-grey' : '' }}">
+                                    <input type="checkbox" name="completed" onchange="this.form.submit()" {{ $task->completed ? 'checked' : '' }}>
+                                </div>
+                            </form>
+                        </div>
+                    @endforeach
+                    <div class="card mb-3">
+                        <form action="{{ route('projects.tasks.add', ['project' => $project]) }}" method="POST">
+                            {{ csrf_field() }}
+                            <input name="body" type="text" placeholder="No tasks yet, add one" class="w-full">
+                        </form>
+                    </div>
                 </div>
 
                 <div class="">
@@ -27,11 +40,9 @@
                     <textarea class="card w-full" style="min-height: 200px;">Lorem ipsum.</textarea>
                 </div>
             </div>
-            <div class="lg:w-1/4 px-3">
+            <div class="lg:w-1/4 px-3 mt-8">
                 @include('projects.components.card')
             </div>
         </div>
     </main>
-
-
 @endsection
