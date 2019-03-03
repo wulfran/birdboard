@@ -26,6 +26,7 @@ class ProjectsController extends Controller
         $data = request()->validate([
             'title' => 'required',
             'description' => 'required',
+            'notes' => 'min:3'
         ]);
 
         $project = auth()->user()->projects()->create($data);
@@ -40,5 +41,14 @@ class ProjectsController extends Controller
         }
 
         return view('projects.show', compact(['project']));
+    }
+
+    public function postUpdate(Project $project)
+    {
+        $this->authorize('update', $project);
+
+        $project->update(request(['notes']));
+
+        return redirect(route('projects.show' , ['project' => $project]));
     }
 }

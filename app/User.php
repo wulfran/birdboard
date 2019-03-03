@@ -39,6 +39,6 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->hasMany(Project::class, 'user_id');
+        return $this->hasMany(Project::class, 'user_id')->orderBy('updated_at', 'desc');
     }
 }

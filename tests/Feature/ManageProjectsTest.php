@@ -17,18 +17,28 @@ class ManageProjectsTest extends TestCase
     public function user_can_create_project()
     {
         $this->withoutExceptionHandling();
-
         $this->signIn();
 
         $this->get('/projects/create')->assertStatus(200);
 
-        $attributes = factory(Project::class)->raw(['user_id' => auth()->id()]);
+        $attributes = [
+            'title' => $this->faker->sentence,
+            'description' => $this->faker->sentence,
+            'notes' => 'General notes here.'
+        ];
 
-        $this->post('/projects', $attributes)->assertRedirect();
+        $response = $this->post('/projects', $attributes);
+
+        $project = Project::where($attributes)->first();
+
+        $response->assertRedirect($project->getUrl());
 
         $this->assertDatabaseHas('projects', $attributes);
 
-        $this->get('/projects')->assertSee($attributes['title']);
+        $this->get($project->getUrl())
+            ->assertSee($attributes['title'])
+            ->assertSee($attributes['description'])
+            ->assertSee($attributes['notes']);
     }
 
     /** @test */
@@ -108,4 +118,34 @@ class ManageProjectsTest extends TestCase
     {
         $this->get(route('projects.create'))->assertRedirect('login');
     }
+
+    /** @test */
+    public function user_can_update_a_project()
+    {
+        $this->signIn();
+
+        $this->withoutExceptionHandling();
+
+        $project= factory('App\Models\Project')->create(['user_id' => auth()->id()]);
+
+        $this->patch($project->getUrl(), [
+            'notes' => 'Changed'
+        ])
+        ->assertRedirect($project->getUrl());
+
+        $this->assertDatabaseHas('projects', [
+            'notes' => 'Changed'
+        ]);
+    }
+
+    /** @test */
+    public function user_cannot_update_projects_of_others()
+    {
+        $this->signIn();
+
+        $project = factory(Project::class)->create();
+
+        $this->patch($project->getUrl(),[])->assertStatus(403);
+    }
+
 }

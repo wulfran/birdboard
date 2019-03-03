@@ -18,6 +18,7 @@ class CreateProjectsTable extends Migration
             $table->unsignedInteger('user_id');
             $table->string('title');
             $table->text('description');
+            $table->text('notes')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id', 'projects_ibkf_1')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
