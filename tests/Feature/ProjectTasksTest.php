@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Project;
 use App\Models\Task;
+use Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -37,11 +38,10 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_project_can_have_tasks()
     {
-        $this->signIn();
+        $project = app(ProjectFactory::class)
+            ->create();
 
-        $project = factory(Project::class)->create(['user_id' => auth()->id()]);
-
-        $this->post(route('projects.tasks.add', ['project' => $project]), ['body' => 'Test task']);
+        $this->actingAs($project->user)->post(route('projects.tasks.add', ['project' => $project]), ['body' => 'Test task']);
 
         $this->get(route('projects.show', ['project' => $project]))
             ->assertSee('Test task');
@@ -50,11 +50,9 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_task_requires_a_body()
     {
-        $this->signIn();
-
-        $project = auth()->user()->projects()->create(
-            factory(Project::class)->raw()
-        );
+        $project = app(ProjectFactory::class)
+            ->ownedBy($this->signIn())
+            ->create();
 
         $data = factory(Task::class)->raw(['body' => '']);
 
@@ -66,15 +64,12 @@ class ProjectTasksTest extends TestCase
     /** @test */
     public function a_task_can_be_updated()
     {
-        $this->signIn();
+        $project = app(ProjectFactory::class)
+            ->ownedBy($this->signIn())
+            ->withTasks(1)
+            ->create();
 
-        $project = auth()->user()->projects()->create(
-            factory(Project::class)->raw()
-        );
-
-        $task = $project->addTask('Test ask');
-
-        $this->patch(route('projects.tasks.patch', ['project' => $project, 'task' => $task]), [
+        $this->patch(route('projects.tasks.patch', ['project' => $project, 'task' => $project->tasks->first()]), [
             'body' => 'changed',
             'completed' => true
         ]);
@@ -90,11 +85,11 @@ class ProjectTasksTest extends TestCase
     {
         $this->signIn();
 
-        $project = factory(Project::class)->create();
+        $project = app(ProjectFactory::class)
+            ->withTasks(1)
+            ->create();
 
-        $task = $project->addTask('Test task');
-
-        $this->patch(route('projects.tasks.patch', ['project' => $project, 'task' => $task]), [
+        $this->patch(route('projects.tasks.patch', ['project' => $project, 'task' => $project->tasks->first()]), [
             'body' => 'Failed update',
         ])->assertStatus(403);
 
